@@ -1,0 +1,212 @@
+/* print.css - gaya untuk template SPT/SPD (A4) */
+@page {
+    size: A4;
+    margin: 20mm;
+}
+
+body {
+    font-family: "Times New Roman", Georgia, serif;
+    color: #000;
+    background: #fff;
+    /* -webkit-print-color-adjust: exact; */
+    margin: 0;
+    padding: 0;
+}
+
+.page-a4 {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    padding: 20mm;
+    box-sizing: border-box;
+    background: white;
+}
+
+/* KOP surat */
+.kop {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid #000;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.kop-left h1 {
+    font-size: 18px;
+    margin: 0;
+    text-align: left;
+    font-weight: 700;
+}
+
+.kop-left h2 {
+    font-size: 16px;
+    margin: 4px 0 6px 0;
+    font-weight: 600;
+}
+
+.kop-left .alamat {
+    font-size: 11px;
+    margin: 0;
+}
+
+.kop-right .kota {
+    font-size: 14px;
+    font-weight: 600;
+    text-align: right;
+}
+
+/* Content */
+.content {
+    padding-top: 10px;
+}
+
+.judul {
+    text-align: center;
+    font-size: 16px;
+    margin: 4px 0 2px 0;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.judul-small {
+    text-align: left;
+    font-size: 14px;
+    margin: 6px 0 6px 0;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.nomor {
+    text-align: center;
+    font-size: 13px;
+    margin: 6px 0 12px 0;
+    font-weight: 600;
+}
+
+.block {
+    margin: 8px 0;
+    font-size: 12.5px;
+}
+
+.subjudul {
+    font-size: 13px;
+    font-weight: 700;
+    margin: 10px 0 6px 0;
+}
+
+.placeholder {
+    font-weight: 600;
+}
+
+/* Paragraph alignment */
+.justify {
+    text-align: justify;
+    text-justify: inter-word;
+    line-height: 1.45;
+}
+
+/* Signature block */
+.ttd-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 18px;
+}
+
+.signature {
+    text-align: center;
+    width: 45%;
+}
+
+.signature .instansi {
+    font-size: 12px;
+    margin-bottom: 40px;
+    font-weight: 600;
+}
+
+.ttd-space {
+    height: 70px;
+}
+
+.ttd-name {
+    margin: 0;
+    font-size: 12px;
+}
+
+.ttd-jabatan {
+    margin: 0;
+    font-size: 12px;
+    font-style: italic;
+}
+
+/* Divider */
+.divider {
+    border: 0;
+    border-top: 1px dashed #444;
+    margin: 14px 0;
+}
+
+/* SPD table */
+.spd-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.spd-table td {
+    vertical-align: top;
+    padding: 6px 4px;
+}
+
+/* SPD signature layout */
+.spd-ttd {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 18px;
+}
+
+.left-ttd {
+    width: 50%;
+}
+
+.right-ttd {
+    width: 45%;
+    text-align: center;
+}
+
+/* Footer & print button (not printed by default) */
+.footer {
+    margin-top: 20px;
+    text-align: left;
+}
+
+#downloadBtn {
+    background: #0b5ed7;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.footer-text {
+    font-size: 11px;
+    color: #444;
+    margin-top: 6px;
+}
+
+@media print {
+
+    #downloadBtn,
+    .footer-text {
+        display: none;
+    }
+
+    body,
+    .page-a4 {
+        margin: 0;
+        box-shadow: none;
+    }
+}

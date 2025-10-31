@@ -1,0 +1,272 @@
+/* assets/css/sekwan.css - Tema Abu-Abu untuk Sekwan */
+
+/* Reset dan Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f0f0;
+    /* Abu muda background */
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Header Sekwan */
+header {
+    background: linear-gradient(135deg, #6c757d, #5a6268);
+    color: white;
+    padding: 15px 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+header h2 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+header nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+header nav a:hover {
+    color: #ffd700;
+}
+
+header nav a.logout {
+    color: yellow;
+}
+
+/* Sidebar Sekwan - diperbarui */
+.sidebar-sekwan {
+    width: 220px;
+        background: linear-gradient(135deg, #6c757d, #5a6268); /* biru DPRD */
+    color: white;
+    padding: 20px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+    z-index: 900;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-sekwan h3 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: white;
+    border-bottom: 2px solid white;
+    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+    margin-top: 80px;
+}
+
+.sidebar-sekwan ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-sekwan ul li {
+    margin-bottom: 10px;
+}
+
+.sidebar-sekwan ul li a {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* untuk ikon */
+    padding: 8px 12px;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background 0.3s ease;
+}
+
+.sidebar-sekwan ul li a:hover {
+    background: #0056b3; /* hover lebih gelap */
+}
+
+.sidebar-sekwan ul li a.logout {
+    background: #dc3545;
+}
+
+.sidebar-sekwan ul li a.logout:hover {
+    background: #c82333;
+}
+
+/* Menu aktif */
+.sidebar-sekwan ul li a.active {
+    background: #0056b3;
+    font-weight: bold;
+}
+
+
+/* Main Content */
+.main-content-sekwan {
+    flex: 1;
+    padding: 20px 20px 20px 240px;
+    /* Padding left = sidebar width + gap */
+    margin-top: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: padding-left 0.3s ease;
+}
+
+.main-content-sekwan h1,
+.main-content-sekwan h2 {
+    color: #6c757d;
+    margin-bottom: 15px;
+}
+
+.main-content-sekwan p {
+    margin-bottom: 20px;
+}
+
+/* Table Styling untuk Antrian */
+.sekwan-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.sekwan-table th,
+.sekwan-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.sekwan-table th {
+    background: #6c757d;
+    color: white;
+}
+
+.sekwan-table tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.sekwan-table tr:hover {
+    background: #e2e6ea;
+}
+
+.sekwan-table a {
+    background: #6c757d;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+}
+
+.sekwan-table a:hover {
+    background: #5a6268;
+}
+
+/* Form dan Button di Paraf */
+form {
+    margin-bottom: 20px;
+}
+
+form button {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+form button:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+/* Highlight Skor Prioritas */
+.prioritas-tinggi {
+    background: #dc3545 !important;
+    color: white;
+    font-weight: bold;
+}
+
+/* Empty State */
+.empty-antrian {
+    text-align: center;
+    font-style: italic;
+    color: #666;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+/* Footer */
+footer {
+    background: #343a40;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    margin-top: auto;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+}
+
+/* Responsif Mobile */
+@media (max-width: 768px) {
+    .sidebar-sekwan {
+        transform: translateX(-100%);
+    }
+
+    .sidebar-sekwan.active {
+        transform: translateX(0);
+    }
+
+    .main-content-sekwan {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .menu-toggle {
+        display: block;
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+}

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Surat Perintah Tugas</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2.5cm 2.5cm 2.5cm 2.5cm;
+        }
+
+        body {
+            font-family: "Times New Roman", serif;
+            font-size: 12pt;
+            line-height: 1.3;
+            color: #000;
+        }
+
+        .kop {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .kop h1 {
+            font-size: 16pt;
+            margin: 0;
+        }
+
+        .kop h2 {
+            font-size: 14pt;
+            margin: 0;
+        }
+
+        .kop p {
+            font-size: 10pt;
+            margin: 2px 0;
+        }
+
+        .garis {
+            border-top: 3px solid #000;
+            border-bottom: 1px solid #000;
+            margin-top: 4px;
+            margin-bottom: 10px;
+        }
+
+        .judul {
+            text-align: center;
+            font-weight: bold;
+            text-decoration: underline;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        .nomor {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .isi p {
+            text-align: justify;
+            margin: 4px 0;
+        }
+
+        .tabel-info {
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .tabel-info td {
+            padding: 3px 0;
+            vertical-align: top;
+        }
+
+        .menugaskan {
+            font-weight: bold;
+            text-align: center;
+            margin: 15px 0 10px 0;
+        }
+
+        .ttd {
+            margin-top: 40px;
+            width: 100%;
+        }
+
+        .ttd td {
+            vertical-align: top;
+        }
+
+        .kanan {
+            width: 60%;
+            text-align: center;
+        }
+
+        .kanan .spasi {
+            height: 70px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="kop">
+        <h1>DEWAN PERWAKILAN RAKYAT DAERAH</h1>
+        <h2>KABUPATEN BANGGAI KEPULAUAN</h2>
+        <p>Jln. Bukit Trikora Jalur Dua No. 02 Telp./Fax (0462) 2222069 – 2222070</p>
+        <p>SALAKAN</p>
+    </div>
+    <div class="garis"></div>
+
+    <div class="judul">SURAT PERINTAH TUGAS</div>
+    <div class="nomor">NOMOR : {{SPT_NO}}</div>
+
+    <table class="tabel-info">
+        <tr>
+            <td width="40%">Nama (yang memberikan tugas)</td>
+            <td>: ARKAM SUPU, S.Th.I., M.H</td>
+        </tr>
+        <tr>
+            <td>Jabatan</td>
+            <td>: Ketua DPRD Kabupaten Banggai Kepulauan</td>
+        </tr>
+    </table>
+
+    <div class="menugaskan">MENUGASKAN :</div>
+
+    <table class="tabel-info">
+        <tr>
+            <td width="15%">Kepada</td>
+            <td>: </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>Nama&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{NAMA}}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>Jabatan&nbsp;&nbsp;: {{JABATAN}}</td>
+        </tr>
+    </table>
+
+    <table class="tabel-info">
+        <tr>
+            <td width="15%">Untuk</td>
+            <td>: {{ALASAN}}</td>
+        </tr>
+    </table>
+
+    <p>Demikian Surat Tugas ini dibuat dan diberikan kepada yang bersangkutan untuk dilaksanakan sebagaimana mestinya.
+    </p>
+
+    <table class="ttd">
+        <tr>
+            <td width="40%">
+                <p>DIKELUARKAN DI : Salakan</p>
+                <p>PADA TANGGAL&nbsp;&nbsp;: {{TGL_TERBIT}}</p>
+            </td>
+            <td class="kanan">
+                <p>DEWAN PERWAKILAN RAKYAT DAERAH<br>KABUPATEN BANGGAI KEPULAUAN</p>
+                <div class="spasi"></div>
+                <p><strong>{{SIGNER_NAMA}}</strong></p>
+                <p>{{SIGNER_JABATAN}}</p>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>

@@ -1,0 +1,585 @@
+/* assets/css/umum.css - Versi Baru: Fix Layout Sidebar Overlap */
+
+/* Reset dan Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    overflow-x: hidden;
+    /* Hindari horizontal scroll karena sidebar */
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #e8f5e9;
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    /* Flex untuk keseluruhan layout */
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Header Umum - Sticky dan full width */
+header {
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+    color: white;
+    padding: 15px 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Container logo + judul */
+.header-left {
+    display: flex;
+    align-items: center;
+    /* sejajarkan logo & H1 vertikal */
+    gap: 15px;
+    /* jarak antara logo dan H1 */
+}
+
+header .logo {
+    width: 50px;
+    height: auto;
+}
+
+header h1 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+/* Navigation */
+header nav ul {
+    list-style: none;
+    display: flex;
+}
+
+header nav ul li {
+    margin-left: 20px;
+}
+
+header nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+header nav ul li a:hover {
+    color: #ffd700;
+}
+
+
+/* ====== PROFIL ====== */
+a.menu-profil {
+    display: inline-flex;
+    background-color: #3498db;
+    align-items: center;
+    gap: 6px;
+    /* jarak ikon & teks */
+    text-decoration: none;
+    /* hilangkan garis bawah */
+    color: #ffffff;
+    font-size: 14px;
+    padding: 6px 10px;
+    /* padding hanya sekitar teks */
+    border-radius: 6px;
+    transition: background 0.3s, color 0.3s;
+}
+
+a.menu-profil i {
+    font-size: 16px;
+    color: #ffffff;
+}
+
+a.menu-profil:hover {
+    background: #e9ecef;
+    /* efek hover hanya kotak teks */
+    color: #000;
+    text-decoration: none;
+}
+
+a.menu-profil:hover i {
+    color: #000;
+    text-decoration: none;
+}
+
+.btn-tolak {
+    background-color: #e74c3c;
+    /* merah */
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.btn-tolak:hover {
+    background-color: #c0392b;
+    /* merah lebih gelap */
+}
+
+/* ====== LOGOUT ====== */
+a.menu-logout {
+    display: inline-flex;
+    background-color: #db1313;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    color: #ffffff;
+    /* warna merah logout */
+    font-size: 14px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: background 0.3s, color 0.3s;
+}
+
+a.menu-logout i {
+    font-size: 16px;
+    color: #ffffff;
+}
+
+a.menu-logout:hover {
+    background: #ffebee;
+    color: #d32f2f;
+    text-decoration: none;
+}
+
+a.menu-logout:hover i {
+    color: #d32f2f;
+}
+
+/* Sidebar Umum - Fixed */
+.sidebar-umum {
+    width: 220px;
+    background: #28a745;
+    color: white;
+    padding: 20px;
+    /* lebih kecil agar isi tidak terlalu jauh */
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+    z-index: 900;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Judul sidebar */
+.sidebar-umum h3 {
+    font-size: 14px;
+    /* ukuran wajar */
+    margin-bottom: 15px;
+    /* jarak bawah */
+    border-bottom: 2px solid white;
+    padding: 10px 15px;
+    /* jarak vertikal & horizontal */
+    
+    display: flex;
+    /* untuk ikon + teks */
+    align-items: center;
+    /* sejajar vertikal */
+    gap: 10px;
+    /* jarak ikon ke teks */
+    color: white;
+    padding-top: 80px;
+}
+
+/* List menu */
+.sidebar-umum ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-umum ul li {
+    margin-bottom: 10px;
+    /* lebih rapat */
+}
+
+.sidebar-umum ul li a {
+    display: block;
+    padding: 8px 12px;
+    /* lebih rapat */
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background 0.3s ease;
+}
+
+.sidebar-umum ul li a:hover {
+    background: #218838;
+}
+
+.sidebar-umum ul li a.logout {
+    background: #dc3545;
+}
+
+.sidebar-umum ul li a.logout:hover {
+    background: #c82333;
+}
+
+/* Menu aktif */
+.sidebar-umum ul li a.active {
+    background: #007bff;
+    color: #fff;
+    font-weight: bold;
+}
+
+
+/* Main Content - Padding left untuk hindari overlap sidebar fixed */
+.main-content-umum {
+    flex: 1;
+    padding: 20px 20px 70px 240px;
+    /* Tambah 70px untuk padding-bottom */
+    margin-top: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    min-height: calc(100vh - 100px);
+    transition: padding-left 0.3s ease;
+}
+
+
+.main-content-umum h1,
+.main-content-umum h2 {
+    color: #28a745;
+    margin-bottom: 15px;
+}
+
+.main-content-umum p {
+    margin-bottom: 20px;
+}
+
+/* Form Styling */
+form {
+    max-width: 600px;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+form label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+    color: #28a745;
+}
+
+form input[type="text"],
+form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-top: 5px;
+    transition: border 0.3s ease;
+}
+
+form input:focus,
+form textarea:focus {
+    border-color: #28a745;
+    outline: none;
+}
+
+form button {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+form button:hover {
+    background: #218838;
+    transform: translateY(-2px);
+}
+
+form button[name="action"][value="setujui"] {
+    background: #218838;
+}
+
+/* Table Styling */
+.umum-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.umum-table th,
+.umum-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.umum-table th {
+    background: #28a745;
+    color: white;
+}
+
+.umum-table tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.umum-table tr:hover {
+    background: #e9f7ef;
+}
+
+.umum-table a {
+    background: #28a745;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+}
+
+.umum-table a:hover {
+    background: #218838;
+}
+
+/* Highlight Prioritas */
+.prioritas-tinggi {
+    background: #ffc107 !important;
+    color: #212529;
+    font-weight: bold;
+}
+
+/* Empty State */
+.empty-antrian {
+    text-align: center;
+    font-style: italic;
+    color: #218838;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+/* Code Snippet */
+code {
+    background: #eee;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+/* Footer - Push ke bawah */
+footer {
+    background: #218838;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    position: fixed;
+    /* Footer tetap di bawah */
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    /* Pastikan di atas elemen lain, tapi di bawah header */
+}
+
+/* Responsif Mobile: Sembunyikan sidebar, hilangkan padding left main */
+@media (max-width: 768px) {
+    .sidebar-umum {
+        transform: translateX(-100%);
+        /* Hidden off-screen */
+    }
+
+    .sidebar-umum.active {
+        transform: translateX(0);
+        /* Tampilkan jika toggle JS */
+    }
+
+    .main-content-umum {
+        padding-left: 20px;
+        /* Kembali normal, no offset */
+        padding-right: 20px;
+        margin-top: 10px;
+    }
+
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    /* Optional: Tambah toggle button di header untuk mobile */
+    .menu-toggle {
+        display: block;
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+}
+
+
+/* assets/css/umum.css */
+
+/* Reset dasar */
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f4f6f9;
+    color: #218838;
+}
+
+h1,
+h2,
+h3 {
+    margin-top: 0;
+    color: #ffffff;
+}
+
+a {
+    text-decoration: none;
+    color: #3498db;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Layout utama */
+.main-content-umum {
+    margin-left: 240px;
+    /* jika sidebar lebarnya 240px */
+    padding: 30px;
+    min-height: 100vh;
+    background: #f9fbfd;
+    margin-top: 20px;
+}
+
+/* Form styling */
+form {
+    background: #fff;
+    padding: 24px 28px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    max-width: 600px;
+    margin-bottom: 40px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #34495e;
+}
+
+form input[type="text"],
+form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #f9fafb;
+    font-size: 1rem;
+    transition: border 0.2s;
+}
+
+form input:focus,
+form textarea:focus {
+    border-color: #3498db;
+    outline: none;
+    background: #fff;
+}
+
+form textarea {
+    resize: vertical;
+    min-height: 70px;
+}
+
+form button {
+    background: linear-gradient(90deg, #3498db 0%, #6dd5fa 100%);
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    box-shadow: 0 2px 6px rgba(52, 152, 219, 0.2);
+}
+
+form button:hover {
+    background: linear-gradient(90deg, #2980b9 0%, #57c1eb 100%);
+}
+
+/* Prioritas tinggi */
+.priority-reasons {
+    margin-top: 40px;
+    background: #fff;
+    padding: 24px 28px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+.priority-reasons h2 {
+    margin-bottom: 20px;
+    color: #e74c3c;
+}
+
+.reasons-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.reason-card {
+    background: #fdfdfd;
+    border: 1px solid #e0e6ed;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s;
+}
+
+.reason-card:hover {
+    transform: translateY(-3px);
+}
+
+.reason-card h3 {
+    margin: 0 0 10px;
+    font-size: 1rem;
+    color: #2d3436;
+}
+
+.reason-card p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.empty-antrian {
+    color: #777;
+    font-style: italic;
+    margin: 10px 0;
+    text-align: center;
+}
