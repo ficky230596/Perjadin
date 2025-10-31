@@ -12,7 +12,7 @@ try {
 }
 
 // Fonnte Token - Ganti dengan token Anda
-$fonnte_token = 'qrhtbHCbgDvaBtwvYVTZ';  // Contoh: @123abc
+$fonnte_token = 'cUYc8QvuE29aQSHUad3R';  // Contoh: @123abc
 
 function sendWaNotification($phone, $message, $token) {
     if (!$phone) return;  // Skip jika no HP kosong
