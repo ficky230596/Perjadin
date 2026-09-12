@@ -93,7 +93,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'ketua') {
             </h2>
             <nav>
                 <a href="ketua_dashboard.php" style="color: #fff; text-decoration: none; margin-right: 24px; font-weight: 500; transition: color 0.2s;">Dashboard</a>
-                <a href="logout.php" style="color: #ffc107; text-decoration: none; font-weight: 600; border: 1px solid #ffc107; padding: 6px 18px; border-radius: 20px; transition: background 0.2s, color 0.2s;">Logout</a>
+                <a href="../logout.php" style="color: #ffc107; text-decoration: none; font-weight: 600; border: 1px solid #ffc107; padding: 6px 18px; border-radius: 20px; transition: background 0.2s, color 0.2s;">Logout</a>
             </nav>
         </div>
     </header>
