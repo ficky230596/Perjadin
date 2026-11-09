@@ -1,0 +1,3 @@
+git add .
+git commit -m "menambahkan menu detail sppd dan laporan untuk ketua serta sekwan"
+git push origin main

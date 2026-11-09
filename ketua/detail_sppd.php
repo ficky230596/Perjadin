@@ -1,381 +1,665 @@
+
 <?php
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', '1');
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'ketua') {
+if (
+    !isset($_SESSION['user_id']) ||
+    ($_SESSION['role'] ?? '') !== 'ketua'
+) {
     header('Location: ../index.php');
     exit;
 }
 
+require_once '../config/db.php';
+
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+
+$sppd = null;
+$errorMessage = '';
+
+if (!$id || $id < 1) {
+    $errorMessage = 'ID pengajuan tidak valid.';
+} else {
+    try {
+        $query = "SELECT
+                    p.*,
+                    COALESCE(u.nama, p.nama, 'Tidak Diketahui') AS nama_pegawai,
+                    COALESCE(u.jabatan, 'Staf') AS jabatan_pegawai,
+                    u.wa_phone
+                  FROM pengajuan p
+                  LEFT JOIN users u ON p.pegawai_id = u.id
+                  WHERE p.id = ?
+                  LIMIT 1";
+
+        $stmt = $pdo->prepare($query);
+        $stmt->execute([$id]);
+        $sppd = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$sppd) {
+            $errorMessage = 'Data pengajuan SPPD tidak ditemukan.';
+        }
+    } catch (PDOException $e) {
+        error_log('Detail SPPD Ketua: ' . $e->getMessage());
+        $errorMessage = 'Terjadi kesalahan saat mengambil data pengajuan.';
+    }
+}
+
+$statusColors = [
+    'selesai' => '#198754',
+    'ditolak' => '#dc3545',
+    'diajukan' => '#c9972e',
+    'paraf_sekwan' => '#0d9488',
+    'ttd_ketua' => '#17477f',
+];
+
+$currentStatus = $sppd['status'] ?? '';
+$badgeColor = $statusColors[$currentStatus] ?? '#64748b';
+
+function detailEsc($value): string
+{
+    return htmlspecialchars(
+        (string) ($value ?? '-'),
+        ENT_QUOTES,
+        'UTF-8'
+    );
+}
+
+function detailDate($value): string
+{
+    if (empty($value)) {
+        return '-';
+    }
+
+    $timestamp = strtotime((string) $value);
+
+    return $timestamp !== false
+        ? date('d-m-Y', $timestamp)
+        : '-';
+}
+
 include 'header_ketua.php';
 include 'sidebar_ketua.php';
-include '../config/db.php';
-
-$id = $_GET['id'] ?? null;
-
-if (!$id || !is_numeric($id)) {
-    echo "<div class='alert-error'><h3>Error: ID pengajuan tidak valid.</h3></div>";
-    include 'footer.php';
-    exit;
-}
-
-try {
-    $query = "SELECT p.*, 
-                     COALESCE(u.nama, p.nama, 'Tidak Diketahui') AS nama_pegawai, 
-                     COALESCE(u.jabatan, 'Staf') AS jabatan_pegawai,
-                     u.wa_phone 
-              FROM pengajuan p 
-              LEFT JOIN users u ON p.pegawai_id = u.id 
-              WHERE p.id = ?";
-
-    $stmt = $pdo->prepare($query);
-    $stmt->execute([$id]);
-    $sppd = $stmt->fetch();
-
-    if (!$sppd) {
-        echo "<div class='alert-error'><h3>Error: Data pengajuan SPPD dengan ID $id tidak ditemukan.</h3></div>";
-        include 'footer.php';
-        exit;
-    }
-
-} catch (PDOException $e) {
-    echo "<div class='alert-error'><h3>Database Error:</h3><p>" . htmlspecialchars($e->getMessage()) . "</p></div>";
-    include 'footer.php';
-    exit;
-}
-
-// Format warna status badge
-$status_colors = [
-    'selesai' => '#28a745',
-    'ditolak' => '#dc3545',
-    'diajukan' => '#ffc107',
-    'paraf_sekwan' => '#17a2b8',
-    'ttd_ketua' => '#007bff'
-];
-$current_status = $sppd['status'];
-$badge_color = $status_colors[$current_status] ?? '#6c757d';
 ?>
 
-<div class="main-content-container">
-    <div class="page-header">
-        <div>
-            <h1>Detail Pengajuan SPPD</h1>
-            <p>Informasi lengkap perjalanan dinas #<?php echo $sppd['id']; ?></p>
-        </div>
-        <div class="action-top">
-            <button onclick="window.print()" class="btn btn-print"><i class="fas fa-print"></i> Cetak Dokumen</button>
-            <a href="laporan_ketua.php" class="btn btn-back">Kembali</a>
-        </div>
-    </div>
-
-    <!-- Status Banner -->
-    <div class="status-banner" style="border-left-color: <?php echo $badge_color; ?>">
-        <div>
-            <span class="status-label">Status Saat Ini:</span>
-            <span class="status-badge" style="background-color: <?php echo $badge_color; ?>">
-                <?php echo strtoupper(str_replace('_', ' ', $sppd['status'])); ?>
-            </span>
-        </div>
-        <div>
-            <span class="status-label">Urgensi:</span>
-            <strong><?php echo ucfirst($sppd['urgensi']); ?></strong>
-        </div>
-    </div>
-
-    <!-- Grid Informasi -->
-    <div class="grid-container">
-        <!-- Kolom 1: Informasi Pegawai -->
-        <div class="card">
-            <h3><i class="fas fa-user"></i> Informasi Pegawai</h3>
-            <table class="table-info">
-                <tr>
-                    <th>Nama Pemohon</th>
-                    <td><?php echo htmlspecialchars($sppd['nama_pegawai']); ?></td>
-                </tr>
-                <tr>
-                    <th>Jabatan</th>
-                    <td><?php echo htmlspecialchars($sppd['jabatan_pegawai']); ?></td>
-                </tr>
-                <tr>
-                    <th>Pangkat / Golongan</th>
-                    <td><?php echo htmlspecialchars($sppd['pangkat'] ?? '-'); ?> /
-                        <?php echo htmlspecialchars($sppd['golongan'] ?? '-'); ?></td>
-                </tr>
-                <tr>
-                    <th>Fraksi / Komisi</th>
-                    <td><?php echo htmlspecialchars($sppd['fraksi'] ?: '-'); ?> /
-                        <?php echo htmlspecialchars($sppd['komisi'] ?: '-'); ?></td>
-                </tr>
-                <tr>
-                    <th>No. WhatsApp</th>
-                    <td><?php echo htmlspecialchars($sppd['wa_phone'] ?? '-'); ?></td>
-                </tr>
-            </table>
-        </div>
-
-        <!-- Kolom 2: Detail Perjalanan -->
-        <div class="card">
-            <h3><i class="fas fa-map-marked-alt"></i> Detail Perjalanan Dinas</h3>
-            <table class="table-info">
-                <tr>
-                    <th>Tujuan</th>
-                    <td><strong><?php echo htmlspecialchars($sppd['tujuan']); ?></strong></td>
-                </tr>
-                <tr>
-                    <th>Tanggal Berangkat</th>
-                    <td><?php echo date('d-m-Y', strtotime($sppd['tanggal_berangkat'])); ?></td>
-                </tr>
-                <tr>
-                    <th>Tanggal Kembali</th>
-                    <td><?php echo date('d-m-Y', strtotime($sppd['tanggal_kembali'])); ?></td>
-                </tr>
-                <tr>
-                    <th>Alat Angkutan</th>
-                    <td><?php echo htmlspecialchars($sppd['alat_angkutan']); ?></td>
-                </tr>
-                <tr>
-                    <th>Instansi Anggaran</th>
-                    <td><?php echo htmlspecialchars($sppd['instansi_anggaran']); ?></td>
-                </tr>
-            </table>
-        </div>
-    </div>
-
-    <!-- Card Lebar: Maksud & Dokumen -->
-    <div class="card full-width">
-        <h3><i class="fas fa-file-alt"></i> Maksud & Administrasi Surat</h3>
-        <table class="table-info">
-            <tr>
-                <th style="width: 20%;">Maksud Perjalanan</th>
-                <td><?php echo nl2br(htmlspecialchars($sppd['alasan'])); ?></td>
-            </tr>
-            <tr>
-                <th>No. SPT / SPD</th>
-                <td>
-                    SPT: <strong><?php echo htmlspecialchars($sppd['spt_no'] ?? 'Belum ada'); ?></strong><br>
-                    SPD: <strong><?php echo htmlspecialchars($sppd['spd_no'] ?? 'Belum ada'); ?></strong>
-                </td>
-            </tr>
-            <tr>
-                <th>Pengikut</th>
-                <td><?php echo htmlspecialchars($sppd['pengikut'] ?? 'Tidak ada pengikut'); ?></td>
-            </tr>
-            <?php if (!empty($sppd['alasan_penolakan'])): ?>
-                <tr>
-                    <th>Alasan Penolakan</th>
-                    <td style="color: #dc3545; font-weight: bold;">
-                        <?php echo htmlspecialchars($sppd['alasan_penolakan']); ?></td>
-                </tr>
-            <?php endif; ?>
-        </table>
-    </div>
-</div>
-
 <style>
-    .main-content-container {
-        width: 92%;
-        margin: 20px auto;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    .detail-page {
+        max-width: 1250px;
+        margin: 0 auto;
+        padding: 10px 0 35px;
+        color: #26364a;
+        font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
     }
 
-    .page-header {
+    .detail-heading {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 20px;
-        background: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        flex-wrap: wrap;
+        gap: 18px;
+        margin-bottom: 22px;
     }
 
-    .page-header h1 {
+    .detail-heading h1 {
+        margin: 0 0 8px;
+        color: #10294d;
+        font-size: 27px;
+        font-weight: 800;
+    }
+
+    .detail-heading p {
         margin: 0;
-        font-size: 24px;
-        color: #333;
-    }
-
-    .page-header p {
-        margin: 5px 0 0 0;
-        color: #666;
+        color: #64748b;
         font-size: 14px;
+        line-height: 1.7;
     }
 
-    .action-top {
+    .detail-actions {
         display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+    }
+
+    .detail-btn {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 16px;
+        border: none;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background .2s ease;
+    }
+
+    .detail-btn-print {
+        background: #17477f;
+        color: #fff;
+    }
+
+    .detail-btn-print:hover {
+        background: #10294d;
+        color: #fff;
+    }
+
+    .detail-btn-back {
+        background: #fff8e6;
+        border: 1px solid #f0dba7;
+        color: #8a6415;
+    }
+
+    .detail-btn-back:hover {
+        background: #fdf0c9;
+        color: #70500e;
+    }
+
+    .detail-status-banner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 18px;
+        padding: 20px 23px;
+        margin-bottom: 22px;
+        border: 1px solid #e5eaf1;
+        border-left: 5px solid var(--status-color);
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 5px 18px rgba(16, 41, 77, .05);
+    }
+
+    .detail-status-group {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
         gap: 10px;
     }
 
-    .btn {
-        padding: 8px 16px;
-        border-radius: 6px;
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 14px;
-        cursor: pointer;
-        border: none;
-        transition: opacity 0.2s;
+    .detail-status-label {
+        color: #64748b;
+        font-size: 13px;
     }
 
-    .btn:hover {
-        opacity: 0.85;
-    }
-
-    .btn-print {
-        background: #28a745;
-        color: #fff;
-    }
-
-    .btn-back {
-        background: #6c757d;
-        color: #fff;
+    .detail-status-badge {
         display: inline-flex;
         align-items: center;
-    }
-
-    .status-banner {
-        background: #fff;
-        padding: 15px 20px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-left: 6px solid #007bff;
-    }
-
-    .status-label {
-        color: #666;
-        margin-right: 10px;
-        font-size: 14px;
-    }
-
-    .status-badge {
-        color: #fff;
-        padding: 5px 12px;
+        gap: 7px;
+        padding: 7px 12px;
         border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        letter-spacing: 0.5px;
+        background: var(--status-color);
+        color: #fff;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .4px;
     }
 
-    .grid-container {
+    .detail-urgency {
+        color: #17477f;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .detail-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 20px;
         margin-bottom: 20px;
     }
 
-    .card {
+    .detail-card {
+        min-width: 0;
+        overflow: hidden;
+        border: 1px solid #e5eaf1;
+        border-radius: 13px;
         background: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 6px 20px rgba(16, 41, 77, .05);
     }
 
-    .card.full-width {
-        grid-column: span 2;
+    .detail-card.full-width {
+        grid-column: 1 / -1;
     }
 
-    .card h3 {
-        margin-top: 0;
-        font-size: 16px;
-        color: #007bff;
-        border-bottom: 2px solid #f1f1f1;
-        padding-bottom: 10px;
-        margin-bottom: 15px;
+    .detail-card-heading {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 17px 20px;
+        border-bottom: 1px solid #e5eaf1;
+        background: linear-gradient(110deg, #10294d, #17477f);
+        color: #fff;
     }
 
-    .table-info {
+    .detail-card-heading i {
+        color: #f2bd4b;
+        font-size: 18px;
+    }
+
+    .detail-card-heading h2 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .detail-card-body {
+        padding: 16px 20px;
+    }
+
+    .detail-info-table {
         width: 100%;
         border-collapse: collapse;
     }
 
-    .table-info th,
-    .table-info td {
-        padding: 10px 12px;
+    .detail-info-table th,
+    .detail-info-table td {
+        padding: 13px 11px;
+        border-bottom: 1px solid #edf0f5;
         text-align: left;
+        vertical-align: top;
+        font-size: 13px;
+        line-height: 1.7;
+        overflow-wrap: anywhere;
+    }
+
+    .detail-info-table tr:last-child th,
+    .detail-info-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .detail-info-table th {
+        width: 39%;
+        background: #f8fafc;
+        color: #475569;
+        font-weight: 700;
+    }
+
+    .detail-info-table td {
+        color: #26364a;
+    }
+
+    .detail-emphasis {
+        color: #17477f;
+        font-weight: 800;
+    }
+
+    .detail-rejection {
+        color: #b91c1c;
+        font-weight: 700;
+    }
+
+    .detail-error {
+        padding: 30px 22px;
+        margin: 15px 0 30px;
+        border: 1px solid #fecaca;
+        border-left: 5px solid #dc3545;
+        border-radius: 12px;
+        background: #fff5f5;
+        color: #991b1b;
+    }
+
+    .detail-error h2 {
+        margin: 0 0 8px;
+        font-size: 19px;
+    }
+
+    .detail-error p {
+        margin: 0 0 18px;
         font-size: 14px;
-        border-bottom: 1px solid #f8f9fa;
+        line-height: 1.7;
     }
 
-    .table-info th {
-        color: #555;
-        width: 35%;
-        font-weight: 600;
-        background: #fafafa;
-        border-radius: 4px 0 0 4px;
+    @media (max-width: 950px) {
+        .detail-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .detail-card.full-width {
+            grid-column: auto;
+        }
     }
 
-    .table-info td {
-        color: #333;
+    @media (max-width: 600px) {
+        .detail-heading {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .detail-heading h1 {
+            font-size: 23px;
+        }
+
+        .detail-actions {
+            width: 100%;
+        }
+
+        .detail-actions .detail-btn {
+            flex: 1;
+        }
+
+        .detail-status-banner {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 17px;
+        }
+
+        .detail-card-heading {
+            padding: 15px;
+        }
+
+        .detail-card-body {
+            padding: 10px;
+        }
+
+        .detail-info-table th,
+        .detail-info-table td {
+            padding: 10px 8px;
+            font-size: 12px;
+        }
+
+        .detail-info-table th {
+            width: 40%;
+        }
     }
 
-    .alert-error {
-        width: 90%;
-        margin: 30px auto;
-        padding: 20px;
-        background: #f8d7da;
-        color: #721c24;
-        border-radius: 8px;
-        border: 1px solid #f5c6cb;
-    }
-
-    /* Print Optimization */
     @media print {
+        @page {
+            size: A4;
+            margin: 12mm;
+        }
 
-        .action-top,
-        .sidebar,
-        header,
-        .page-header p {
+        html,
+        body {
+            min-height: auto !important;
+            height: auto !important;
+            display: block !important;
+            background: #fff !important;
+            color: #000 !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .main-header,
+        .sidebar-ketua,
+        #sidebarOverlayKetua,
+        #sidebarToggle,
+        .footer-ketua,
+        .detail-actions {
             display: none !important;
         }
 
-        .main-content-container {
-            width: 100% !important;
+        main {
+            display: block !important;
             margin: 0 !important;
             padding: 0 !important;
         }
 
-        .card {
+        .detail-page {
+            max-width: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .detail-heading h1 {
+            font-size: 21px;
+            color: #10294d !important;
+        }
+
+        .detail-status-banner,
+        .detail-card {
             box-shadow: none !important;
-            border: 1px solid #ddd !important;
-            page-break-inside: avoid;
-            margin-bottom: 15px;
+            break-inside: avoid;
         }
 
-        .page-header {
-            background: none !important;
-            padding: 0 !important;
-            box-shadow: none !important;
-            border-bottom: 2px solid #000;
-            margin-bottom: 15px;
+        .detail-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
         }
 
-        .page-header h1 {
-            font-size: 20px;
-            color: #000;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .grid-container {
-            grid-template-columns: 1fr;
+        .detail-card-heading {
+            background: #10294d !important;
         }
 
-        .card.full-width {
-            grid-column: span 1;
+        .detail-info-table th,
+        .detail-info-table td {
+            padding: 8px;
+            font-size: 10px;
         }
 
-        .page-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 15px;
+        .detail-card-body {
+            padding: 8px;
         }
     }
 </style>
+
+<main>
+    <div class="detail-page">
+
+        <?php if ($errorMessage !== ''): ?>
+
+                <div class="detail-error">
+                    <h2>
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        Data Tidak Dapat Ditampilkan
+                    </h2>
+
+                    <p>
+                        <?= detailEsc($errorMessage) ?>
+                    </p>
+
+                    <a href="laporan_ketua.php" class="detail-btn detail-btn-back">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Kembali ke Laporan
+                    </a>
+                </div>
+
+        <?php else: ?>
+
+                <div class="detail-heading">
+                    <div>
+                        <h1>
+                            <i class="fa-solid fa-file-lines"></i>
+                            Detail Pengajuan SPPD
+                        </h1>
+
+                        <p>
+                            Informasi lengkap perjalanan dinas
+                            <strong>#<?= (int) $sppd['id'] ?></strong>
+                        </p>
+                    </div>
+
+                    <div class="detail-actions">
+                        <button
+                            type="button"
+                            onclick="window.print()"
+                            class="detail-btn detail-btn-print">
+                            <i class="fa-solid fa-print"></i>
+                            Cetak Dokumen
+                        </button>
+
+                        <a
+                            href="laporan_ketua.php"
+                            class="detail-btn detail-btn-back">
+                            <i class="fa-solid fa-arrow-left"></i>
+                            Kembali
+                        </a>
+                    </div>
+                </div>
+
+                <section
+                    class="detail-status-banner"
+                    style="--status-color: <?= detailEsc($badgeColor) ?>;">
+
+                    <div class="detail-status-group">
+                        <span class="detail-status-label">Status Saat Ini:</span>
+
+                        <span class="detail-status-badge">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <?= detailEsc(strtoupper(str_replace('_', ' ', $currentStatus))) ?>
+                        </span>
+                    </div>
+
+                    <div class="detail-status-group">
+                        <span class="detail-status-label">Urgensi:</span>
+
+                        <span class="detail-urgency">
+                            <?= detailEsc(ucfirst((string) ($sppd['urgensi'] ?? '-'))) ?>
+                        </span>
+                    </div>
+                </section>
+
+                <div class="detail-grid">
+
+                    <!-- Informasi Pegawai -->
+                    <section class="detail-card">
+                        <div class="detail-card-heading">
+                            <i class="fa-solid fa-user-tie"></i>
+                            <h2>Informasi Pegawai</h2>
+                        </div>
+
+                        <div class="detail-card-body">
+                            <table class="detail-info-table">
+                                <tr>
+                                    <th>Nama Pemohon</th>
+                                    <td><?= detailEsc($sppd['nama_pegawai']) ?></td>
+                                </tr>
+
+                                <tr>
+                                    <th>Jabatan</th>
+                                    <td><?= detailEsc($sppd['jabatan_pegawai']) ?></td>
+                                </tr>
+
+                                <tr>
+                                    <th>Pangkat / Golongan</th>
+                                    <td>
+                                        <?= detailEsc($sppd['pangkat'] ?? '-') ?>
+                                        /
+                                        <?= detailEsc($sppd['golongan'] ?? '-') ?>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>Fraksi / Komisi</th>
+                                    <td>
+                                        <?= detailEsc($sppd['fraksi'] ?? '-') ?>
+                                        /
+                                        <?= detailEsc($sppd['komisi'] ?? '-') ?>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>No. WhatsApp</th>
+                                    <td><?= detailEsc($sppd['wa_phone'] ?? '-') ?></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </section>
+
+                    <!-- Detail Perjalanan -->
+                    <section class="detail-card">
+                        <div class="detail-card-heading">
+                            <i class="fa-solid fa-route"></i>
+                            <h2>Detail Perjalanan Dinas</h2>
+                        </div>
+
+                        <div class="detail-card-body">
+                            <table class="detail-info-table">
+                                <tr>
+                                    <th>Tujuan</th>
+                                    <td class="detail-emphasis">
+                                        <?= detailEsc($sppd['tujuan'] ?? '-') ?>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>Tanggal Berangkat</th>
+                                    <td>
+                                        <?= detailDate($sppd['tanggal_berangkat'] ?? null) ?>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>Tanggal Kembali</th>
+                                    <td>
+                                        <?= detailDate($sppd['tanggal_kembali'] ?? null) ?>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>Alat Angkutan</th>
+                                    <td><?= detailEsc($sppd['alat_angkutan'] ?? '-') ?></td>
+                                </tr>
+
+                                <tr>
+                                    <th>Instansi Anggaran</th>
+                                    <td><?= detailEsc($sppd['instansi_anggaran'] ?? '-') ?></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </section>
+
+                    <!-- Maksud dan Administrasi -->
+                    <section class="detail-card full-width">
+                        <div class="detail-card-heading">
+                            <i class="fa-solid fa-file-circle-check"></i>
+                            <h2>Maksud dan Administrasi Surat</h2>
+                        </div>
+
+                        <div class="detail-card-body">
+                            <table class="detail-info-table">
+                                <tr>
+                                    <th style="width: 25%;">Maksud Perjalanan</th>
+                                    <td>
+                                        <?= nl2br(detailEsc($sppd['alasan'] ?? '-')) ?>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>No. SPT / SPD</th>
+                                    <td>
+                                        SPT:
+                                        <strong>
+                                            <?= detailEsc($sppd['spt_no'] ?? 'Belum ada') ?>
+                                        </strong>
+                                        <br>
+
+                                        SPD:
+                                        <strong>
+                                            <?= detailEsc($sppd['spd_no'] ?? 'Belum ada') ?>
+                                        </strong>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>Pengikut</th>
+                                    <td>
+                                        <?= detailEsc($sppd['pengikut'] ?? 'Tidak ada pengikut') ?>
+                                    </td>
+                                </tr>
+
+                                <?php if (!empty($sppd['alasan_penolakan'])): ?>
+                                        <tr>
+                                            <th>Alasan Penolakan</th>
+                                            <td class="detail-rejection">
+                                                <?= nl2br(detailEsc($sppd['alasan_penolakan'])) ?>
+                                            </td>
+                                        </tr>
+                                <?php endif; ?>
+                            </table>
+                        </div>
+                    </section>
+
+                </div>
+
+        <?php endif; ?>
+
+    </div>
+</main>
 
 <?php include 'footer.php'; ?>

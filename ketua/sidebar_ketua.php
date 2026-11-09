@@ -1,101 +1,263 @@
 <style>
-.sidebar-ketua {
-    width: 210px;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #2c3e50 70%, #2980b9 100%);
-    color: #fff;
-    padding: 24px 0 0 0;
-    position: fixed;
-    left: 0;
-    top: 0;
-    transition: all 0.3s;
-    z-index: 100;
-}
-.sidebar-ketua h3 {
-    text-align: center;
-    margin-bottom: 32px;
-    font-size: 1.3em;
-    letter-spacing: 1px;
-    font-weight: 700;
-}
-.sidebar-ketua ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-.sidebar-ketua ul li {
-    margin: 0;
-}
-.sidebar-ketua ul li a {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #fff;
-    text-decoration: none;
-    padding: 14px 32px;
-    font-size: 1.05em;
-    border-left: 4px solid transparent;
-    transition: background 0.2s, border-color 0.2s, color 0.2s;
-}
-.sidebar-ketua ul li a:hover, .sidebar-ketua ul li a.active {
-    background: rgba(255,255,255,0.08);
-    border-left: 4px solid #00b894;
-    color: #00b894;
-}
-.sidebar-ketua ul li a[style*="color:red"] {
-    color: #ff7675 !important;
-}
-@media (max-width: 800px) {
+    /* SIDEBAR KETUA */
     .sidebar-ketua {
-        width: 100%;
-        min-height: unset;
-        height: auto;
-        position: relative;
-        padding: 12px 0 0 0;
+        position: fixed;
+        top: 89px;
+        left: 0;
+        z-index: 1100;
+        width: 250px;
+        height: calc(100vh - 89px);
+        height: calc(100dvh - 89px);
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 24px 0;
+        background: linear-gradient(180deg, #10294d 0%, #17477f 100%);
+        color: #fff;
+        box-shadow: 4px 0 18px rgba(16, 41, 77, 0.12);
+        transition: transform 0.25s ease, visibility 0.25s ease;
     }
-    main {
-        margin-left: 0 !important;
-        padding-top: 120px !important;
-    }
-}
-</style>
-<!-- Hamburger Button -->
-<button id="sidebarToggle" class="sidebar-hamburger" style="display:none;position:fixed;top:18px;left:18px;z-index:200;background:rgba(44,62,80,0.95);border:none;border-radius:6px;padding:10px 12px;cursor:pointer;">
-    <span style="display:block;width:24px;height:3px;background:#fff;margin:4px 0;border-radius:2px;"></span>
-    <span style="display:block;width:24px;height:3px;background:#fff;margin:4px 0;border-radius:2px;"></span>
-    <span style="display:block;width:24px;height:3px;background:#fff;margin:4px 0;border-radius:2px;"></span>
-</button>
 
+    /* JUDUL SIDEBAR */
+    .sidebar-ketua h3 {
+        margin: 0 18px 28px;
+        padding: 0 10px 20px;
+        text-align: center;
+        font-size: 15px;
+        letter-spacing: 1.2px;
+        font-weight: 800;
+        color: #fff;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    /* DAFTAR MENU */
+    .sidebar-ketua ul {
+        list-style: none;
+        padding: 0 12px;
+        margin: 0;
+    }
+
+    .sidebar-ketua ul li {
+        margin: 0 0 7px;
+    }
+
+    /* TAUTAN MENU */
+    .sidebar-ketua ul li a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-height: 46px;
+        padding: 12px 15px;
+        border: 1px solid transparent;
+        border-left: 3px solid transparent;
+        border-radius: 9px;
+        color: #dce7f5;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+        transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+
+    .sidebar-ketua ul li a .sidebar-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        flex-shrink: 0;
+        color: #f2bd4b;
+        font-size: 15px;
+    }
+
+    /* HOVER DAN MENU AKTIF */
+    .sidebar-ketua ul li a:hover,
+    .sidebar-ketua ul li a.active {
+        background: rgba(255, 255, 255, 0.10);
+        border-left-color: #f2bd4b;
+        color: #fff;
+    }
+
+    .sidebar-ketua ul li a.active {
+        background: linear-gradient(90deg,
+                rgba(242, 189, 75, 0.18),
+                rgba(255, 255, 255, 0.05));
+        font-weight: 700;
+    }
+
+    .sidebar-ketua ul li a:hover .sidebar-icon,
+    .sidebar-ketua ul li a.active .sidebar-icon {
+        color: #f2bd4b;
+    }
+
+    /* MENU LOGOUT */
+    .sidebar-ketua ul li a.sidebar-logout {
+        margin-top: 18px;
+        color: #ffb4b4;
+    }
+
+    .sidebar-ketua ul li a.sidebar-logout .sidebar-icon {
+        color: #ff8585;
+    }
+
+    .sidebar-ketua ul li a.sidebar-logout:hover {
+        background: rgba(255, 118, 117, 0.12);
+        border-left-color: #ff7675;
+        color: #fff;
+    }
+
+    /* LAPISAN GELAP DI BELAKANG SIDEBAR */
+    .sidebar-overlay-ketua {
+        display: none;
+    }
+
+    /* KONTEN HALAMAN */
+    main {
+        min-width: 0;
+        margin-left: 250px;
+        padding: 25px;
+    }
+
+    /* RESPONSIVE TABLET DAN HP */
+    @media (max-width: 800px) {
+        .sidebar-ketua {
+            top: 76px;
+            left: 0;
+            z-index: 1150;
+            width: 270px;
+            max-width: 85vw;
+            height: calc(100vh - 76px);
+            height: calc(100dvh - 76px);
+            padding-top: 22px;
+            transform: translateX(-100%);
+            visibility: hidden;
+        }
+
+        .sidebar-ketua.show {
+            transform: translateX(0);
+            visibility: visible;
+        }
+
+        .sidebar-ketua h3 {
+            margin-bottom: 22px;
+        }
+
+        .sidebar-overlay-ketua.show {
+            display: block;
+            position: fixed;
+            inset: 76px 0 0;
+            z-index: 1140;
+            background: rgba(10, 24, 43, 0.48);
+        }
+
+        main {
+            margin-left: 0 !important;
+            padding: 22px 16px !important;
+        }
+    }
+</style>
+
+<!-- SIDEBAR -->
 <aside class="sidebar-ketua" id="sidebarKetua">
-    <h3>Menu Ketua</h3>
+    <h3>MENU KETUA</h3>
+
     <ul>
-        <li><a href="ketua_dashboard.php">📑 Dashboard</a></li>
-        <li><a href="ketua_ttd.php">✍️ Tanda Tangan</a></li>
-        <li><a href="laporan_ketua.php">📊 Laporan</a></li>
-        <li><a href="../logout.php" style="color:red;">🚪 Logout</a></li>
+        <li>
+            <a href="ketua_dashboard.php"
+                class="<?= basename($_SERVER['PHP_SELF']) === 'ketua_dashboard.php' ? 'active' : '' ?>">
+                <span class="sidebar-icon">
+                    <i class="fa-solid fa-house"></i>
+                </span>
+                <span>Dashboard</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="ketua_ttd.php" class="<?= basename($_SERVER['PHP_SELF']) === 'ketua_ttd.php' ? 'active' : '' ?>">
+                <span class="sidebar-icon">
+                    <i class="fa-solid fa-file-signature"></i>
+                </span>
+                <span>Tanda Tangan</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="laporan_ketua.php"
+                class="<?= basename($_SERVER['PHP_SELF']) === 'laporan_ketua.php' ? 'active' : '' ?>">
+                <span class="sidebar-icon">
+                    <i class="fa-solid fa-chart-column"></i>
+                </span>
+                <span>Laporan</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="../logout.php" class="sidebar-logout">
+                <span class="sidebar-icon">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </span>
+                <span>Logout</span>
+            </a>
+        </li>
     </ul>
 </aside>
 
-<script>
-function checkSidebar() {
-    if(window.innerWidth <= 800) {
-        document.getElementById('sidebarKetua').style.display = 'none';
-        document.getElementById('sidebarToggle').style.display = 'block';
-    } else {
-        document.getElementById('sidebarKetua').style.display = 'block';
-        document.getElementById('sidebarToggle').style.display = 'none';
-    }
-}
-window.addEventListener('resize', checkSidebar);
-window.addEventListener('DOMContentLoaded', checkSidebar);
+<!-- OVERLAY MOBILE -->
+<div class="sidebar-overlay-ketua" id="sidebarOverlayKetua"></div>
 
-document.getElementById('sidebarToggle').onclick = function() {
-    var sidebar = document.getElementById('sidebarKetua');
-    if(sidebar.style.display === 'block') {
-        sidebar.style.display = 'none';
-    } else {
-        sidebar.style.display = 'block';
-    }
-};
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const sidebar = document.getElementById('sidebarKetua');
+        const toggle = document.getElementById('sidebarToggle');
+        const overlay = document.getElementById('sidebarOverlayKetua');
+
+        if (!sidebar || !toggle || !overlay) {
+            return;
+        }
+
+        function bukaSidebar() {
+            sidebar.classList.add('show');
+            overlay.classList.add('show');
+            toggle.setAttribute('aria-expanded', 'true');
+
+            const icon = toggle.querySelector('i');
+
+            if (icon) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-xmark');
+            }
+        }
+
+        function tutupSidebar() {
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+            toggle.setAttribute('aria-expanded', 'false');
+
+            const icon = toggle.querySelector('i');
+
+            if (icon) {
+                icon.classList.remove('fa-xmark');
+                icon.classList.add('fa-bars');
+            }
+        }
+
+        toggle.addEventListener('click', function () {
+            if (sidebar.classList.contains('show')) {
+                tutupSidebar();
+            } else {
+                bukaSidebar();
+            }
+        });
+
+        overlay.addEventListener('click', tutupSidebar);
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                tutupSidebar();
+            }
+        });
+
+        window.addEventListener('resize', function () {
+            if (window.innerWidth > 800) {
+                tutupSidebar();
+            }
+        });
+    });
 </script>
-<main style="margin-left:210px;padding:20px;">
